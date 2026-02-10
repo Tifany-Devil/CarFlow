@@ -37,7 +37,7 @@ mas o fluxo principal pode manter foco no ciclo semanal + ciclo mensal.
 
 ---
 
-## Regras importantes (para anotar no BPMN)
+## Regras importantes
 - Apenas **coletas aprovadas** entram no batch mensal.
 - Consulta pública é **sem login**.
 - Toda consulta gera log (sucesso/sem resultado/erro), sem dados pessoais.

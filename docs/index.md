@@ -30,10 +30,10 @@ com processamento mensal para **consolidação de médias** e disponibilização
 </div>
 
 <div class="card">
-<b>🚀 Próximos passos recomendados</b><br><br>
+<b>🚀 Próximos passos</b><br><br>
 <ol>
-  <li>Finalizar <a href="03-processos-bpmn/">Processos (BPMN)</a> e exportar o diagrama</li>
-  <li>Fechar <a href="04-modelagem-dados/">Modelagem de Dados</a> (ERD + dicionário)</li>
-  <li>Documentar <a href="05-arquitetura/">Arquitetura (C4)</a> e <a href="06-technical-design/">Technical Design</a></li>
+  <li>Documentar <a href="05-arquitetura/">Arquitetura (C4)</a> (Contexto + Containers + Componentes)</li>
+  <li>Documentar <a href="06-technical-design/">Technical Design</a> (camadas, sequências e decisões)</li>
+  <li>Fechar <a href="07-qualidade/">Qualidade</a> (estratégia de testes + CI)</li>
 </ol>
 </div>
