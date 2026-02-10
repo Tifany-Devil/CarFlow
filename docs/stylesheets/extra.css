@@ -1,0 +1,80 @@
+/* ===== CarFlow Docs – Visual polish (MkDocs Material) ===== */
+
+/* Mais “cara de site”, menos “cara de wiki” */
+.md-main__inner {
+  max-width: 1100px;
+}
+
+/* Títulos mais fortes e com espaçamento melhor */
+.md-typeset h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+.md-typeset h2 {
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  margin-top: 2.0rem;
+}
+.md-typeset h3 {
+  font-weight: 700;
+  margin-top: 1.4rem;
+}
+
+/* Parágrafos mais confortáveis */
+.md-typeset p,
+.md-typeset li {
+  line-height: 1.75;
+  font-size: 1.02rem;
+}
+
+/* Blocos de código com borda suave */
+.md-typeset pre > code {
+  border-radius: 14px;
+}
+
+/* Tabelas mais bonitas */
+.md-typeset table:not([class]) {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.md-typeset table:not([class]) th {
+  font-weight: 700;
+}
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  padding: 0.75rem 0.9rem;
+}
+
+/* “Cards” simples para listas (usando Markdown) */
+.md-typeset .card {
+  border-radius: 16px;
+  padding: 1.0rem 1.1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  background: var(--md-default-bg-color);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  margin: 0.9rem 0;
+}
+
+/* Destaque para “badges” (span) */
+.md-typeset .badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  font-size: 0.78rem;
+  vertical-align: middle;
+}
+
+/* Melhorar links */
+.md-typeset a {
+  text-decoration: none;
+}
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Ajuste sutil no header */
+.md-header__title {
+  font-weight: 750;
+}
