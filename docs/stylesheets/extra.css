@@ -2,7 +2,7 @@
 
 /* Mais “cara de site”, menos “cara de wiki” */
 .md-main__inner {
-  max-width: 1100px;
+  max-width: 1400px;
 }
 
 /* Títulos mais fortes e com espaçamento melhor */
@@ -24,8 +24,8 @@
 /* Parágrafos mais confortáveis */
 .md-typeset p,
 .md-typeset li {
-  line-height: 1.75;
-  font-size: 1.02rem;
+  line-height: 1.65;
+  font-size: 0.95rem;
 }
 
 /* Blocos de código com borda suave */
@@ -49,21 +49,32 @@
 /* “Cards” simples para listas (usando Markdown) */
 .md-typeset .card {
   border-radius: 16px;
-  padding: 1.0rem 1.1rem;
-  border: 1px solid var(--md-default-fg-color--lightest);
-  background: var(--md-default-bg-color);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  margin: 0.9rem 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  margin: 1rem 0;
 }
 
-/* Destaque para “badges” (span) */
+[data-md-color-scheme="slate"] .md-typeset .card {
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+}
+
 .md-typeset .badge {
   display: inline-block;
-  padding: 0.15rem 0.5rem;
+  padding: 0.22rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid var(--md-default-fg-color--lightest);
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(0,0,0,0.03);
   font-size: 0.78rem;
-  vertical-align: middle;
+  margin-right: 0.35rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .badge {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
 }
 
 /* Melhorar links */
@@ -77,4 +88,35 @@
 /* Ajuste sutil no header */
 .md-header__title {
   font-weight: 750;
+}
+
+/* Tipografia mais “docs profissional” */
+.md-typeset {
+  font-size: 0.95rem;
+}
+
+.md-typeset h1 {
+  font-size: 2.0rem;
+}
+
+.md-typeset h2 {
+  font-size: 1.45rem;
+}
+
+/* Deixar o conteúdo usar melhor a largura */
+.md-grid {
+  max-width: 1400px;
+}
+
+/* Centralizar imagens/miniaturas clicáveis (glightbox) */
+.md-typeset a.glightbox {
+  display: flex;
+  justify-content: center;
+}
+
+/* Garantir que a imagem respeite a largura e fique bonita */
+.md-typeset a.glightbox > img {
+  height: auto;
+  max-width: 100%;
+  border-radius: 12px;
 }
