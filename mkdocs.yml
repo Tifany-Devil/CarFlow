@@ -59,3 +59,11 @@ nav:
   - Início: index.md
   - Visão Geral:
       - Escopo (IN/OUT): 01-visao-geral/escopo.md
+  - Requisitos: 02-requisitos/index.md
+  - Processos (BPMN): 03-processos-bpmn/index.md
+  - Modelagem de Dados: 04-modelagem-dados/index.md
+  - Arquitetura (C4): 05-arquitetura/index.md
+  - Technical Design: 06-technical-design/index.md
+  - Qualidade: 07-qualidade/index.md
+  - ADRs: 08-adr/index.md
+
