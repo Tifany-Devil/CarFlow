@@ -60,6 +60,7 @@ nav:
   - Início: index.md
   - Visão Geral:
       - Escopo (IN/OUT): 01-visao-geral/escopo.md
+  - Jira & Planning: 09-jira/index.md
   - Requisitos: 02-requisitos/index.md
   - Processos (BPMN): 03-processos-bpmn/index.md
   - Modelagem de Dados: 04-modelagem-dados/index.md
