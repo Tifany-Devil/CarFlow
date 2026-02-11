@@ -66,6 +66,7 @@ nav:
   - Modelagem de Dados: 04-modelagem-dados/index.md
   - Arquitetura (C4): 05-arquitetura/index.md
   - Technical Design: 06-technical-design/index.md
+  - Protótipos: 10-prototipos/index.md
   - Qualidade: 07-qualidade/index.md
   - ADRs: 08-adr/index.md
 
