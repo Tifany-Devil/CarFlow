@@ -1,46 +1,61 @@
 # Processos (BPMN)
 
-Esta seção descreve o **processo de negócio completo** do CarFlow (visão end-to-end), incluindo papéis
-que são **spec-only** (documentados, não implementados) e as partes **build** (Consulta pública + Batch).
+Esta seção descreve o **processo de negócio completo** do CarFlow (visão end-to-end), mapeando o ciclo de vida da informação desde o planejamento da visita até a consolidação do preço médio.
+
+O escopo inclui papéis **spec-only** (documentados para contexto) e as partes **build** (Consulta pública + Batch).
 
 ---
 
-## BPMN — Processo completo (visão macro)
+## 1. Macrofluxo do Processo (BPMN)
 
-[![BPMN - Processo completo](../assets/diagrams/bpmn-processo.png){ width="720" }](../assets/diagrams/bpmn-processo.png){ .glightbox }
+O diagrama abaixo apresenta o fluxo lógico das atividades, decisões e responsabilidades.
 
-### Objetivo do processo
-Garantir coleta estruturada de preços, validação de qualidade e consolidação mensal para disponibilizar
-consulta pública com desempenho e rastreabilidade.
+[![BPMN - Processo completo](../assets/diagrams/bpmn-processo.png){ width="800" }](../assets/diagrams/bpmn-processo.png){ .glightbox }
 
----
-
-## Participantes (lanes/pools sugeridos)
-- **Coordenador (região)**
-- **Pesquisador**
-- **Sistema (CarFlow)**
-- **Batch (Job mensal)**
-- **Usuário Público**
-
-> Admin/Gerente/Lojista podem aparecer como **subprocessos** ou **processos auxiliares** (spec-only),
-mas o fluxo principal pode manter foco no ciclo semanal + ciclo mensal.
+### Objetivo do Processo
+Garantir uma coleta estruturada de preços em campo, submetida a uma validação de qualidade rigorosa, resultando em uma base consolidada mensalmente para consulta pública rápida e auditável.
 
 ---
 
-## Fluxo resumido (o que o diagrama representa)
-1. **Planejamento semanal**: Coordenador define roteiro/lojas e atribui pesquisadores.
-2. **Coleta em campo**: Pesquisador visita loja e registra coletas de veículos (marca, modelo, preço, ano-modelo, opcionais etc.).
-3. **Validação**: Coordenador revisa e aprova/rejeita coletas.
-4. **Consolidação mensal (Batch)**: no início do mês, o job consolida médias e grava em tabela otimizada para consulta.
-5. **Consulta pública**: usuário consulta por Marca → Modelo → Ano-modelo e recebe valor consolidado e mês de referência.
-6. **Log de consulta**: cada consulta gera registro em `query_logs` (sem dados pessoais).
+## 2. Atores e Responsabilidades
+
+| Ator | Tipo | Responsabilidade no Processo |
+| :--- | :--- | :--- |
+| **Coordenador** | Humano | Planejamento semanal (roteiros) e Controle de Qualidade (aprovação). |
+| **Pesquisador** | Humano | Execução da coleta em campo (Input de dados). |
+| **Sistema (Batch)** | Sistêmico | Consolidação massiva de dados (ETL) no dia 1º do mês. |
+| **Usuário Público** | Humano | Consumo da informação final (Consulta). |
+
+> *Nota:* Papéis administrativos (Admin/Gerente) e de Parceiros (Lojista) são considerados processos de apoio e não estão detalhados neste fluxo principal.
 
 ---
 
-## Regras importantes
-- Apenas **coletas aprovadas** entram no batch mensal.
-- Consulta pública é **sem login**.
-- Toda consulta gera log (sucesso/sem resultado/erro), sem dados pessoais.
+## 3. Descrição do Fluxo
+
+### 3.1. Ciclo Semanal (Operacional)
+1.  **Planejamento:** O Coordenador define quais lojas devem ser visitadas e atribui a tarefa ao Pesquisador.
+2.  **Coleta:** O Pesquisador vai à loja e registra os veículos.
+3.  **Validação:** O Coordenador analisa as coletas pendentes:
+    * **Se Aprovado:** O dado fica pronto para o processamento mensal.
+    * **Se Rejeitado:** O dado volta para correção ou descarte.
+
+### 3.2. Ciclo Mensal (Sistêmico)
+1.  **Consolidação:** No fechamento do mês, o Job (Batch) processa apenas os registros aprovados.
+2.  **Cálculo:** Gera-se a média, mediana e desvio padrão por modelo.
+3.  **Publicação:** Os dados são gravados na tabela de leitura rápida (`monthly_averages`).
+
+### 3.3. Ciclo Sob Demanda (Consulta)
+1.  **Acesso:** O Usuário Público acessa a interface web.
+2.  **Filtro:** Seleciona Marca → Modelo → Ano.
+3.  **Resultado:** O sistema exibe o preço consolidado e registra o log da operação.
+
+---
+
+## 4. Regras de Negócio do Processo
+
+* **RN01 - Qualidade do Dado:** Apenas coletas com status `APPROVED` entram no cálculo da média mensal.
+* **RN02 - Acesso Livre:** A consulta pública não exige autenticação (login).
+* **RN03 - Rastreabilidade:** Toda consulta pública deve gerar um registro de auditoria técnica (Log), independente se houve resultado ou erro.
 
 ---
 
@@ -49,14 +64,6 @@ mas o fluxo principal pode manter foco no ciclo semanal + ciclo mensal.
 ### Swimlanes — visão por participante
 [![Swimlanes do processo](../assets/diagrams/swimlanes-processo.png){ width="820" }](../assets/diagrams/swimlanes-processo.png){ .glightbox }
 
-### Componentes — visão alto nível (camadas)
-[![Componentes alto nível](../assets/diagrams/componentes-alto-nivel.png){ width="320" }](../assets/diagrams/componentes-alto-nivel.png){ .glightbox }
-
-### Sequência — consulta pública
-[![Sequência consulta pública](../assets/diagrams/sequencia-consulta-publica.png){ width="820" }](../assets/diagrams/sequencia-consulta-publica.png){ .glightbox }
-
-### Sequência — batch mensal
-[![Sequência batch mensal](../assets/diagrams/sequencia-batch-mensal.png){ width="820" }](../assets/diagrams/sequencia-batch-mensal.png){ .glightbox }
-
----
-
+> **Para detalhes de implementação técnica:**
+>
+> A modelagem das classes, diagramas de sequência (interação entre objetos) e arquitetura de componentes estão detalhados na seção **[Technical Design](../06-technical-design/index.md)**.
