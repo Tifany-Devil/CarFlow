@@ -32,7 +32,7 @@ O fluxo de CI está definido no arquivo `.github/workflows/ci.yml`.
 
 ## 3. Métricas de Cobertura (Code Coverage)
 
-O projeto mantém um padrão rigoroso de qualidade, atingindo atualmente **95% de cobertura de código**.
+O projeto mantém um padrão rigoroso de qualidade, atingindo atualmente **96% de cobertura de código**.
 
 Isso significa que quase a totalidade das linhas de código lógicas (Services, ETL, Repositories e Utils) são validadas a cada deploy.
 
