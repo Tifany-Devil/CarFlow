@@ -4,19 +4,21 @@ import os
 # Adiciona a raiz do projeto ao PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-from datetime import datetime
-from src.database import SessionLocal, engine, Base
-from src.services import CarService
+import streamlit as st  # noqa: E402
+import pandas as pd  # noqa: E402
+import plotly.express as px  # noqa: E402
+from datetime import datetime  # noqa: E402
+from src.database import SessionLocal, engine, Base  # noqa: E402
+from src.services import CarService  # noqa: E402
 
 # --- SETUP INICIAL ---
 try:
     Base.metadata.create_all(bind=engine)
 except Exception as e:
-    st.error("Erro ao conectar com o banco de dados. Verifique a configuração da variável DATABASE_URL.")
-    st.error(f"Detalhe: {e}")
+    # Se der erro, mostra na tela mas tenta seguir (pode ser que o banco já exista/esteja inacessível temporariamente)
+    # st.error não interrompe o script se não chamarmos st.stop(), mas aqui o stop é prudente se for crítico.
+    st.error(f"⚠️ Erro de Conexão com Banco de Dados: {e}")
+    st.info("Verifique se a URL no Secrets está correta e se o banco 'carflow' existe no servidor.")
     st.stop()
 
 st.set_page_config(
