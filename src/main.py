@@ -12,7 +12,12 @@ from src.database import SessionLocal, engine, Base
 from src.services import CarService
 
 # --- SETUP INICIAL ---
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    st.error("Erro ao conectar com o banco de dados. Verifique a configuração da variável DATABASE_URL.")
+    st.error(f"Detalhe: {e}")
+    st.stop()
 
 st.set_page_config(
     page_title="CarFlow Analytics",
