@@ -26,7 +26,8 @@ O fluxo de CI está definido no arquivo `.github/workflows/ci.yml`.
 4.  **Linting (Gatekeeper):** Executa o `ruff check .`. Se houver código fora do padrão, o pipeline falha.
 5.  **Testes & Cobertura:** Executa o `pytest` validando a lógica e garantindo a integridade dos dados.
 
-> **[Inserir aqui o print do GitHub Actions com os "Checks" verdes]**
+
+[![Teste1](../assets/images/teste1.png){ width="600" }](../assets/images/teste3.png){ .glightbox }
 
 ---
 
@@ -45,8 +46,9 @@ Foi monitorado cobertura de código para garantir que caminhos críticos não fi
 | **Models (ORM)** | > 95% | Não (declarativo) |
 | **UI (Streamlit)** | > 50% | Não (Smoke test) |
 
-**[Inserir aqui o print do GitHub Actions com os "Checks" verdes]**
 
+[![Teste1](../assets/images/teste1.png){ width="600" }](../assets/images/teste1.png){ .glightbox }
+[![Teste2](../assets/images/teste2.png){ width="600" }](../assets/images/teste2.png){ .glightbox }
 ---
 
 ## 4. Cenários de Teste Principais
