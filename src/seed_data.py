@@ -1,5 +1,12 @@
+import sys
+import os
+
+# Adiciona a raiz do projeto ao PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import random
 from datetime import datetime, timedelta
+from sqlalchemy import text
 from src.database import SessionLocal, engine, Base
 from src.models import Brand, Model, PriceCollection
 
@@ -18,6 +25,21 @@ REGIONS = ["SP", "RJ", "MG", "RS", "PR", "BA", "DF", "SC", "PE"]
 def seed_database():
     print("🚀 Iniciando Seed Otimizado (Volume Alto)...")
     
+    # Tenta matar conexões ativas (Streamlit pode estar segurando o banco)
+    try:
+        print("🔪 Tentando resetar conexões ativas...")
+        with engine.connect() as connection:
+            connection.execution_options(isolation_level="AUTOCOMMIT")
+            connection.execute(text("""
+                SELECT pg_terminate_backend(pg_stat_activity.pid)
+                FROM pg_stat_activity
+                WHERE pg_stat_activity.datname = current_database()
+                AND pid <> pg_backend_pid();
+            """))
+    except Exception as e:
+        print(f"⚠️ Aviso: Não foi possível matar conexões (OK se for a primeira vez): {e}")
+
+    print("♻️ Recriando tabelas...")
     # Limpeza
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
