@@ -10,7 +10,7 @@ Serve como memória técnica do projeto **CarFlow**.
 *   **Status:** Aceito
 *   **Data:** 2024-02-01
 *   **Contexto:**
-    Precisávamos de uma interface web rápida para o MVP (Build), sem a complexidade de manter um Frontend (React/Vue) e um Backend (FastAPI/Django) separados neste momento.
+    Interface web rápida para o MVP (Build), sem a complexidade de manter um Frontend (React/Vue) e um Backend (FastAPI/Django) separados neste momento.
 *   **Decisão:**
     Utilizar o **Streamlit** como stack única.
 *   **Consequências:**
@@ -21,22 +21,7 @@ Serve como memória técnica do projeto **CarFlow**.
 
 ---
 
-## ADR-002: Arquitetura em Camadas (Layered Architecture)
-
-*   **Status:** Aceito
-*   **Data:** 2024-02-02
-*   **Contexto:**
-    Frameworks low-code como Streamlit tendem a virar "scripts espaguete" (mistura de SQL, lógica e UI no mesmo arquivo). Precisávamos garantir testabilidade e manutenibilidade.
-*   **Decisão:**
-    Separar rigorosamente o código em: `View` (Streamlit), `Controller` (Validação), `Service` (Regra de Negócio) e `Repository` (SQL).
-*   **Consequências:**
-    *   (+) Lógica de cálculo de média testável unitariamente sem abrir o navegador.
-    *   (+) Possibilidade de trocar o Streamlit por FastAPI no futuro reaproveitando toda a camada de Service/Repository.
-    *   (-) Boilerplate (código repetitivo) maior para criar novas funcionalidades simples.
-
----
-
-## ADR-003: Repository Pattern com SQLAlchemy
+## ADR-002: Repository Pattern com SQLAlchemy
 
 *   **Status:** Aceito
 *   **Data:** 2024-02-03
@@ -51,7 +36,7 @@ Serve como memória técnica do projeto **CarFlow**.
 
 ---
 
-## ADR-004: Processamento Batch Síncrono (MVP)
+## ADR-003: Processamento Batch Síncrono (MVP)
 
 *   **Status:** Aceito (Provisório)
 *   **Data:** 2024-02-05
@@ -66,7 +51,7 @@ Serve como memória técnica do projeto **CarFlow**.
 
 ---
 
-## ADR-005: Denormalização Controlada (`monthly_averages`)
+## ADR-004: Denormalização Controlada (`monthly_averages`)
 
 *   **Status:** Aceito
 *   **Data:** 2024-02-06
@@ -77,3 +62,25 @@ Serve como memória técnica do projeto **CarFlow**.
 *   **Consequências:**
     *   (+) Leitura ultra-rápida (SELECT simples por índice).
     *   (-) Necessidade de manter consistência (o Batch é responsável por isso).
+
+---
+
+## ADR 005: Render Free Tier para Banco de Dados
+* **Status:** Aceito
+* **Contexto:** Projeto de portfólio sem orçamento para infraestrutura, necessitando de acesso público.
+* **Decisão:** Utilizar o plano gratuito do Render.com para o PostgreSQL.
+* **Consequências:**
+    * (+) Custo zero.
+    * (+) Acesso externo fácil.
+    * (-) **Cold Start:** O banco "hiberna" após inatividade, causando latência de ~30s na primeira conexão (tratado via UX com spinners).
+
+---
+
+## ADR 006: Linter Ruff
+* **Status:** Aceito
+* **Contexto:** Necessidade de manter o código limpo e padronizado no CI/CD.
+* **Decisão:** Substituir o conjunto tradicional (Flake8 + Isort + Black) pelo **Ruff**.
+* **Consequências:**
+    * (+) Execução extremamente rápida no pipeline de CI.
+    * (+) Configuração centralizada.
+
