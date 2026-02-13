@@ -40,6 +40,34 @@ Interface web responsiva (formato smartphone) para digitação ágil dentro das 
 
 [![Pesquisador](../assets/telas/pesquisador.png){ width="320" }](../assets/telas/pesquisador.png){ .glightbox }
 
+###
+
+### 2.2. Rotinas e Scripts Auxiliares
+
+Como esse papel não será implementado, foi feito dois scripts python para auxiliar no desenvolvimento da UI.
+
+#### **Carga Inicial (Seed Data)**
+
+ - **Função:** `src/seed_data.py`
+ - **Lógica:** Gera milhares de registros de `price_collections` distribuídos nos últimos 13 meses, simulando variações de preço por região e depreciação temporal.
+ - **Uso:** Essencial para evitar que a aplicação inicie "vazia" em novos ambientes.
+
+[![Scriptbatch mensal](../assets/images/seed1.png){ width="820" }](../assets/images/seed1.png){ .glightbox }
+
+[![Scriptbatch mensal](../assets/images/seed2.png){ width="820" }](../assets/images/seed2.png){ .glightbox }
+
+#### **Script Batch (ETL)**
+
+ - **Função:** `src/batch_etl.py`
+ - **Lógica:**
+    1.  **Extract:** Busca coletas brutas no banco.
+    2.  **Transform:** Agrupa por Marca/Modelo/Ano/Região e calcula a média ponderada.
+    3.  **Load:** Insere ou atualiza (Upsert) a tabela `monthly_averages` (otimizada para leitura).
+ - **Execução:** Projetado para rodar mensalmente ou sob demanda.
+
+[![Scriptbatch mensal](../assets/images/batch.png){ width="820" }](../assets/images/batch.png){ .glightbox }
+
+
 ### 2.2. Gestão Regional (Coordenador)
 **Status:** Spec-only
 Dashboard para controle de qualidade e gestão da equipe local.

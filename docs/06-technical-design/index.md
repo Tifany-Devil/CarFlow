@@ -190,28 +190,17 @@ Embora o modelo relacional seja normalizado, as tabelas de negócio (`monthly_av
 
 ## 6. Estrutura do Projeto (Source Code)
 
-A organização do código fonte reflete a arquitetura em camadas descrita acima:
+A organização do código fonte reflete a arquitetura em camadas descrita acima, simplificada para o contexto do Streamlit:
 
 ```text
 src/
-├── config/             # Variáveis de ambiente e configuração do DB
-├── controllers/        # (Opcional) Lógica intermediária da UI
-├── models/             # Classes ORM (SQLAlchemy)
-│   ├── base.py
-│   ├── domain.py       # User, Brand, Model
-│   └── operations.py   # PriceCollection, MonthlyAverage
-├── repositories/       # Queries e persistência
-│   ├── collection_repo.py
-│   └── analytics_repo.py
-├── services/           # Regras de Negócio
-│   ├── calculator_service.py # Lógica do Batch
-│   └── search_service.py     # Lógica da Consulta
-├── views/              # Interface Streamlit
-│   ├── components/     # Widgets reutilizáveis
-│   └── pages/
-├── jobs/               # Scripts de execução do Batch
-└── utils/              # Loggers, Formatadores e Helpers
-
+├── batch_etl.py        # Script do Processo Batch (ETL)
+├── database.py         # Configuração de conexão DB e Session
+├── main.py             # Entrypoint da Aplicação (View + Controller)
+├── models.py           # Todos os Modelos ORM (Entities)
+├── repositories.py     # Camada de Acesso a Dados (Repository Pattern)
+├── seed_data.py        # Script para popular banco com dados fictícios
+└── services.py         # Regras de Negócio (Service Layer)
 ```
 
 ---
