@@ -9,3 +9,5 @@ ruff==0.1.14
 pytest==7.4.4
 httpx==0.26.0
 coverage==7.2.7
+mkdocs==1.5.3
+mkdocs-material==9.5.3
