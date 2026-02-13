@@ -2,11 +2,6 @@ import importlib
 from dataclasses import dataclass
 from unittest.mock import MagicMock
 
-import pytest
-
-
-from src.batch_etl import run_monthly_batch
-
 BATCH_MODULE_PATH = "src.batch_etl"  
 
 

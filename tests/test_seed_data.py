@@ -1,7 +1,6 @@
 import importlib.util
 from pathlib import Path
 
-import pytest
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool

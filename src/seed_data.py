@@ -1,6 +1,5 @@
 import random
 from datetime import datetime, timedelta
-from sqlalchemy import text
 from src.database import SessionLocal, engine, Base
 from src.models import Brand, Model, PriceCollection
 
@@ -60,8 +59,10 @@ def seed_database():
                         
                         # Fatores de Variação de Preço
                         regional_factor = 1.0
-                        if region == "SP": regional_factor = 1.03
-                        if region == "BA": regional_factor = 0.96
+                        if region == "SP":
+                            regional_factor = 1.03
+                        if region == "BA":
+                            regional_factor = 0.96
                         
                         # Volatilidade de mercado (depreciação leve no passado)
                         time_factor = 1.0 - (month_offset * 0.005) 

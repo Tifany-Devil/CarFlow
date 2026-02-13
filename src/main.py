@@ -168,7 +168,7 @@ st.markdown("""
 with st.sidebar:
     try:
         st.image("docs/assets/images/logo.png", width=300)
-    except:
+    except Exception:
         st.title("CarFlow")
         
     st.write("")
@@ -321,7 +321,8 @@ if st.session_state.last_search:
             )
             
             fig.update_traces(stackgroup=None, fill='tozeroy')
-            if national_result: fig.update_traces(opacity=0.6)
+            if national_result: 
+                fig.update_traces(opacity=0.6)
 
             st.plotly_chart(fig, use_container_width=True)
 

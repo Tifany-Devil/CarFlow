@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import inspect
 
 from src.database import Base
 from src.models import Brand, Model, PriceCollection, MonthlyAverage, QueryLog

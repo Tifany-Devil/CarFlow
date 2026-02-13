@@ -1,7 +1,5 @@
 import importlib
-from types import SimpleNamespace
 
-import pytest
 from sqlalchemy import text
 
 
