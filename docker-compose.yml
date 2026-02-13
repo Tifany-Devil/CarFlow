@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Serviço da Aplicação (CarFlow)
+  app:
+    build: .
+    container_name: carflow_app
+    ports:
+      - "8501:8501"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/carflow_db
+    volumes:
+      - ./src:/app/src  # Hot-reload: Altera o código, atualiza na hora
+      - ./docs:/app/docs # Disponibiliza assets (logo) para o container
+    depends_on:
+      - db
+
+  # Serviço do Banco de Dados (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: carflow_db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=carflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
