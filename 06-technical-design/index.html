@@ -1,0 +1,1377 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação técnica do projeto CarFlow">
+      
+      
+      
+        <link rel="canonical" href="https://tifany-devil.github.io/CarFlow/06-technical-design/">
+      
+      
+        <link rel="prev" href="../05-arquitetura/">
+      
+      
+        <link rel="next" href="../10-prototipos/">
+      
+      
+      <link rel="icon" href="../assets/images/logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Technical Design - CarFlow</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#technical-design-td" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="CarFlow" class="md-header__button md-logo" aria-label="CarFlow" data-md-component="logo">
+      
+  <img src="../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CarFlow
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Technical Design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Tifany-Devil/CarFlow" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Tifany-Devil/CarFlow
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CarFlow" class="md-nav__button md-logo" aria-label="CarFlow" data-md-component="logo">
+      
+  <img src="../assets/images/logo.png" alt="logo">
+
+    </a>
+    CarFlow
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Tifany-Devil/CarFlow" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Tifany-Devil/CarFlow
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Início
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Visão Geral
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Visão Geral
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-visao-geral/escopo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Escopo (IN/OUT)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-jira/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Jira & Planning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-requisitos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Requisitos
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-processos-bpmn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Processos (BPMN)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-modelagem-dados/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Modelagem de Dados
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-arquitetura/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arquitetura (C4)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Technical Design
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Technical Design
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-arquitetura-em-camadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Arquitetura em Camadas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Arquitetura em Camadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responsabilidades-dos-componentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responsabilidades dos Componentes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fluxo-de-dados-e-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Fluxo de Dados e Dependências
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Fluxo de Dados e Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-integridade-do-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regras de Integridade do Fluxo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-detalhamento-das-classes-code-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1. Detalhamento das Classes (Code Design)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1. Detalhamento das Classes (Code Design)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statisticsservice-domain-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatisticsService (Domain Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#irepository-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      IRepository (Interface / Contract)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#postgresrepository-infrastructure-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgresRepository (Infrastructure Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthlyaverage-data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      MonthlyAverage (Data Model)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-decisao-de-design-repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2. Decisão de Design: Repository Pattern
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-detalhamento-caso-de-uso-consulta-publica" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Detalhamento: Caso de Uso "Consulta Pública"
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Detalhamento: Caso de Uso "Consulta Pública"">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-sequencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo de Sequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrato-da-interface-service-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contrato da Interface (Service Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comportamento-e-tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comportamento e Tratamento de Erros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-detalhamento-caso-de-uso-batch-mensal-etl" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Detalhamento: Caso de Uso "Batch Mensal" (ETL)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Detalhamento: Caso de Uso "Batch Mensal" (ETL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-sequencia_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo de Sequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-processamento-etl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estratégia de Processamento (ETL)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idempotencia-e-consistencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Idempotência e Consistência
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-decisoes-tecnicas-e-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Decisões Técnicas e Trade-offs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Decisões Técnicas e Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-denormalizacao-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1. Denormalização Controlada
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-stack-tecnologica" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2. Stack Tecnológica
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-estrutura-do-projeto-source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Estrutura do Projeto (Source Code)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-requisitos-nao-funcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Requisitos Não-Funcionais
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Requisitos Não-Funcionais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seguranca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Segurança
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-prototipos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Protótipos
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-qualidade/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Qualidade
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-adr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADRs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-arquitetura-em-camadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Arquitetura em Camadas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Arquitetura em Camadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responsabilidades-dos-componentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responsabilidades dos Componentes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fluxo-de-dados-e-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Fluxo de Dados e Dependências
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Fluxo de Dados e Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-integridade-do-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regras de Integridade do Fluxo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-detalhamento-das-classes-code-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1. Detalhamento das Classes (Code Design)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1. Detalhamento das Classes (Code Design)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statisticsservice-domain-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatisticsService (Domain Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#irepository-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      IRepository (Interface / Contract)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#postgresrepository-infrastructure-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      PostgresRepository (Infrastructure Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monthlyaverage-data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      MonthlyAverage (Data Model)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-decisao-de-design-repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2. Decisão de Design: Repository Pattern
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-detalhamento-caso-de-uso-consulta-publica" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Detalhamento: Caso de Uso "Consulta Pública"
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Detalhamento: Caso de Uso "Consulta Pública"">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-sequencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo de Sequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrato-da-interface-service-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contrato da Interface (Service Layer)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comportamento-e-tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comportamento e Tratamento de Erros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-detalhamento-caso-de-uso-batch-mensal-etl" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Detalhamento: Caso de Uso "Batch Mensal" (ETL)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Detalhamento: Caso de Uso "Batch Mensal" (ETL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-sequencia_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo de Sequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-processamento-etl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estratégia de Processamento (ETL)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idempotencia-e-consistencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Idempotência e Consistência
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-decisoes-tecnicas-e-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Decisões Técnicas e Trade-offs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Decisões Técnicas e Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-denormalizacao-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1. Denormalização Controlada
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-stack-tecnologica" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2. Stack Tecnológica
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-estrutura-do-projeto-source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Estrutura do Projeto (Source Code)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-requisitos-nao-funcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Requisitos Não-Funcionais
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Requisitos Não-Funcionais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seguranca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Segurança
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="technical-design-td">Technical Design (TD)<a class="headerlink" href="#technical-design-td" title="Permanent link">&para;</a></h1>
+<p>Esta seção detalha a <strong>arquitetura interna e as decisões de implementação</strong> do CarFlow. O documento serve como referência para o desenvolvimento, manutenção e evolução do sistema, cobrindo camadas, fluxos de execução, contratos de interface e requisitos não-funcionais.</p>
+<p>O foco deste documento é o escopo <strong>Build (MVP)</strong>:</p>
+<ul>
+<li><strong>Consulta Pública:</strong> Interface de leitura de preços consolidados (sem login).</li>
+<li><strong>Processamento Batch:</strong> Rotina mensal de consolidação de dados.</li>
+<li><strong>Observabilidade:</strong> Registro técnico de logs de consulta para auditoria e análise.</li>
+</ul>
+<hr />
+<h2 id="1-arquitetura-em-camadas">1. Arquitetura em Camadas<a class="headerlink" href="#1-arquitetura-em-camadas" title="Permanent link">&para;</a></h2>
+<p>O sistema segue uma arquitetura baseada em camadas (Layered Architecture) para garantir a separação de responsabilidades e facilitar testes.</p>
+<p><a class="glightbox" href="../assets/diagrams/componentes-alto-nivel.png"><img alt="Arquitetura de Camadas" src="../assets/diagrams/componentes-alto-nivel.png" width="320" /></a></p>
+<h3 id="responsabilidades-dos-componentes">Responsabilidades dos Componentes<a class="headerlink" href="#responsabilidades-dos-componentes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Presentation Layer (Streamlit UI)</strong></li>
+<li>Responsável pela renderização de filtros (widgets) e visualização de dados.</li>
+<li>Gerencia o estado da sessão (<em>Session State</em>) e cache de interface.</li>
+<li><strong>Não contém regra de negócio</strong>: apenas valida entradas básicas e invoca o <em>Service</em>.</li>
+<li>
+<p>Trata os retornos do serviço para exibir feedback visual (<em>Success</em>, <em>Warning/No Result</em>, <em>Error</em>).</p>
+</li>
+<li>
+<p><strong>Service Layer (Business Logic)</strong></p>
+</li>
+<li>Núcleo da aplicação. Implementa os casos de uso do sistema.</li>
+<li>Orquestra as chamadas ao repositório e aplica regras de negócio (ex: cálculo de variação percentual, formatação de dados para gráficos).</li>
+<li>
+<p>Garante que todo acesso de consulta gere um registro de log (regra de auditoria).</p>
+</li>
+<li>
+<p><strong>Repository Layer (Data Access)</strong></p>
+</li>
+<li>Abstração do banco de dados utilizando <strong>SQLAlchemy</strong>.</li>
+<li>Converte objetos de domínio para queries SQL e vice-versa.</li>
+<li>
+<p>Isola a aplicação de detalhes específicos do banco (PostgreSQL).</p>
+</li>
+<li>
+<p><strong>Database (PostgreSQL)</strong></p>
+</li>
+<li>Armazena os dados transacionais (<code>price_collections</code>), analíticos (<code>monthly_averages</code>) e logs (<code>query_logs</code>).</li>
+</ul>
+<hr />
+<h2 id="2-fluxo-de-dados-e-dependencias">2. Fluxo de Dados e Dependências<a class="headerlink" href="#2-fluxo-de-dados-e-dependencias" title="Permanent link">&para;</a></h2>
+<p>O diagrama abaixo ilustra como os dados fluem entre o processo de carga (Batch) e o consumo (Consulta).</p>
+<p><a class="glightbox" href="../assets/diagrams/dataflow-01-consulta-batch.png"><img alt="Fluxo de dados (consulta + batch)" src="../assets/diagrams/dataflow-01-consulta-batch.png" width="720" /></a></p>
+<h3 id="regras-de-integridade-do-fluxo">Regras de Integridade do Fluxo<a class="headerlink" href="#regras-de-integridade-do-fluxo" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Segregação de Leitura/Escrita:</strong> A consulta pública acessa estritamente a tabela consolidada <code>monthly_averages</code>, garantindo performance e protegendo os dados brutos.</li>
+<li><strong>Fonte do Batch:</strong> O processo de consolidação lê apenas registros com status <code>APPROVED</code> na tabela <code>price_collections</code>.</li>
+<li><strong>Rastreabilidade:</strong> Toda interação de consulta (inclusive falhas) persiste um evento imutável em <code>query_logs</code>.</li>
+</ol>
+<h3 id="21-detalhamento-das-classes-code-design">2.1. Detalhamento das Classes (Code Design)<a class="headerlink" href="#21-detalhamento-das-classes-code-design" title="Permanent link">&para;</a></h3>
+<p>O diagrama de classes abaixo ilustra a separação estrita entre <strong>Regra de Negócio</strong> (Service) e <strong>Persistência</strong> (Repository), seguindo o princípio da Inversão de Dependência (DIP).</p>
+<p><a class="glightbox" href="../assets/diagrams/uml_classes.png"><img alt="Diagrama UML" src="../assets/diagrams/uml_classes.png" width="520" /></a></p>
+<h4 id="statisticsservice-domain-layer">StatisticsService (Domain Layer)<a class="headerlink" href="#statisticsservice-domain-layer" title="Permanent link">&para;</a></h4>
+<p>Representa o "cérebro" do processamento Batch.
+* <strong>Responsabilidade:</strong> Contém a lógica matemática pura. Não sabe que existe um banco de dados, nem que existe uma interface web.
+* <strong>Métodos Chave:</strong>
+    * <code>calculate_mean(data: List[float]) -&gt; Decimal</code>: Recebe uma lista de preços brutos e devolve a média ponderada.
+    * <code>remove_outliers(data)</code>: Implementa o algoritmo IQR (Intervalo Interquartil) para expurgar preços irreais (ex: R$ 10,00 ou R$ 1.000.000,00 para um Gol).
+    * <code>consolidate_month(ref_date)</code>: Orquestra o processo: chama o repositório para buscar dados, limpa, calcula e manda salvar.</p>
+<h4 id="irepository-interface-contract">IRepository (Interface / Contract)<a class="headerlink" href="#irepository-interface-contract" title="Permanent link">&para;</a></h4>
+<p>Define o <strong>contrato</strong> de acesso aos dados.
+* <strong>Responsabilidade:</strong> Garantir que a camada de serviço não dependa de uma implementação específica de banco (PostgreSQL).
+* <strong>Por que usar:</strong> Permite criar um <code>FakeRepository</code> (em memória) para rodar testes unitários ultra-rápidos sem precisar subir um container Docker de banco de dados.</p>
+<h4 id="postgresrepository-infrastructure-layer">PostgresRepository (Infrastructure Layer)<a class="headerlink" href="#postgresrepository-infrastructure-layer" title="Permanent link">&para;</a></h4>
+<p>A implementação real do contrato.
+* <strong>Responsabilidade:</strong> Traduzir as chamadas do Service para dialeto SQL usando <strong>SQLAlchemy</strong>.
+* <strong>Métodos Chave:</strong>
+    * <code>get_by_filters(...)</code>: Monta queries dinâmicas baseadas nos filtros da tela.
+    * <code>save_bulk(...)</code>: Utiliza operações de <em>batch insert</em> para salvar milhares de médias de uma vez, garantindo performance.</p>
+<h4 id="monthlyaverage-data-model">MonthlyAverage (Data Model)<a class="headerlink" href="#monthlyaverage-data-model" title="Permanent link">&para;</a></h4>
+<p>Representa a estrutura de dados da tabela consolidada.
+* <strong>Responsabilidade:</strong> Mapeamento Objeto-Relacional (ORM).
+* <strong>Atributos:</strong> É uma classe "anêmica" (focada em dados), contendo <code>brand_id</code>, <code>model_id</code>, <code>avg_price</code> e <code>month_ref</code>.</p>
+<hr />
+<h3 id="22-decisao-de-design-repository-pattern">2.2. Decisão de Design: Repository Pattern<a class="headerlink" href="#22-decisao-de-design-repository-pattern" title="Permanent link">&para;</a></h3>
+<p>Adotamos o padrão <strong>Repository</strong> para isolar a complexidade do SQLAlchemy.</p>
+<p><strong>Sem Repository (Anti-pattern no Service):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ruim: O Service sabe que existe SQL e Sessão</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calcular_media</span><span class="p">():</span>
+    <span class="n">dados</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM table&quot;</span><span class="p">)</span> <span class="c1"># Acoplado ao SQL</span>
+    <span class="c1"># ...calcula...</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></p>
+<p><strong>Com Repository (Nossa Abordagem):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Bom: O Service só fala &quot;Python&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calcular_media</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">IRepository</span><span class="p">):</span>
+    <span class="n">dados</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">fetch_all</span><span class="p">()</span> <span class="c1"># Abstração</span>
+    <span class="c1"># ...calcula...</span>
+    <span class="n">repo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">resultado</span><span class="p">)</span>
+</code></pre></div>
+<p>Isso garante que, se mudarmos o banco para MongoDB ou CSV no futuro, a lógica de cálculo de média (Service) <strong>não precisa ser alterada</strong>, apenas a implementação do Repositório.</p>
+<h2 id="3-detalhamento-caso-de-uso-consulta-publica">3. Detalhamento: Caso de Uso "Consulta Pública"<a class="headerlink" href="#3-detalhamento-caso-de-uso-consulta-publica" title="Permanent link">&para;</a></h2>
+<h3 id="fluxo-de-sequencia">Fluxo de Sequência<a class="headerlink" href="#fluxo-de-sequencia" title="Permanent link">&para;</a></h3>
+<p><a class="glightbox" href="../assets/diagrams/sequencia-consulta-publica.png"><img alt="Sequência consulta pública" src="../assets/diagrams/sequencia-consulta-publica.png" width="820" /></a></p>
+<h3 id="contrato-da-interface-service-layer">Contrato da Interface (Service Layer)<a class="headerlink" href="#contrato-da-interface-service-layer" title="Permanent link">&para;</a></h3>
+<p><strong>Entrada (DTO/Argumentos):</strong></p>
+<ul>
+<li><code>brand_id</code> (int, obrigatório)</li>
+<li><code>model_id</code> (int, obrigatório)</li>
+<li><code>year_model</code> (int, obrigatório)</li>
+</ul>
+<p><strong>Saída (Response Object):</strong></p>
+<ul>
+<li><strong>Cenário SUCCESS:</strong> Objeto contendo <code>avg_price</code> (Decimal), <code>month_ref</code> (Date) e <code>samples_count</code> (Int).</li>
+<li><strong>Cenário NO_RESULT:</strong> Retorno vazio ou <code>None</code> (interpretado pela UI como "Sem dados para este período").</li>
+<li><strong>Cenário ERROR:</strong> Exceção tratada ou objeto de erro contendo mensagem amigável (sem expor <em>stacktrace</em>).</li>
+</ul>
+<h3 id="comportamento-e-tratamento-de-erros">Comportamento e Tratamento de Erros<a class="headerlink" href="#comportamento-e-tratamento-de-erros" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Resiliência:</strong> Falhas de conexão com o banco são capturadas no Repositório e relançadas como exceções de domínio (<code>DatabaseConnectionError</code>), permitindo que a UI exiba uma mensagem de "Serviço Indisponível" em vez de quebrar.</li>
+<li><strong>Log de Auditoria:</strong> O registro em <code>query_logs</code> ocorre em um bloco <code>finally</code> ou via <em>hook</em> assíncrono para garantir que seja gravado independente do sucesso da busca.</li>
+</ul>
+<hr />
+<h2 id="4-detalhamento-caso-de-uso-batch-mensal-etl">4. Detalhamento: Caso de Uso "Batch Mensal" (ETL)<a class="headerlink" href="#4-detalhamento-caso-de-uso-batch-mensal-etl" title="Permanent link">&para;</a></h2>
+<h3 id="fluxo-de-sequencia_1">Fluxo de Sequência<a class="headerlink" href="#fluxo-de-sequencia_1" title="Permanent link">&para;</a></h3>
+<p><a class="glightbox" href="../assets/diagrams/sequencia-batch-mensal.png"><img alt="Sequência batch mensal" src="../assets/diagrams/sequencia-batch-mensal.png" width="820" /></a></p>
+<h3 id="estrategia-de-processamento-etl">Estratégia de Processamento (ETL)<a class="headerlink" href="#estrategia-de-processamento-etl" title="Permanent link">&para;</a></h3>
+<p>O Batch atua como um processo de <strong>ETL (Extract, Transform, Load)</strong> executado sob demanda ou agendamento.</p>
+<ol>
+<li><strong>Extract:</strong> Busca coletas em <code>price_collections</code> onde <code>status='APPROVED'</code> e <code>month_ref</code> corresponde ao período alvo.</li>
+<li><strong>Transform:</strong></li>
+<li>Agrupamento por <code>(brand_id, model_id, year_model)</code>.</li>
+<li>Cálculo de estatísticas: Média (<code>avg</code>), Contagem (<code>count</code>).</li>
+<li>
+<p><em>(Futuro)</em>: Remoção de <em>outliers</em> via desvio padrão ou IQR.</p>
+</li>
+<li>
+<p><strong>Load:</strong> Persistência na tabela <code>monthly_averages</code>.</p>
+</li>
+</ol>
+<h3 id="idempotencia-e-consistencia">Idempotência e Consistência<a class="headerlink" href="#idempotencia-e-consistencia" title="Permanent link">&para;</a></h3>
+<ul>
+<li>O script utiliza a estratégia de <strong>UPSERT</strong> (<em>Insert on Conflict Update</em>) baseada na chave única composta <code>(model_id, year_model, month_ref)</code>.</li>
+<li>Isso permite que o batch seja reexecutado múltiplas vezes para o mesmo mês sem duplicar dados, apenas atualizando os valores consolidados.</li>
+</ul>
+<hr />
+<h2 id="5-decisoes-tecnicas-e-trade-offs">5. Decisões Técnicas e Trade-offs<a class="headerlink" href="#5-decisoes-tecnicas-e-trade-offs" title="Permanent link">&para;</a></h2>
+<h3 id="51-denormalizacao-controlada">5.1. Denormalização Controlada<a class="headerlink" href="#51-denormalizacao-controlada" title="Permanent link">&para;</a></h3>
+<p>Embora o modelo relacional seja normalizado, as tabelas de negócio (<code>monthly_averages</code>, <code>query_logs</code>) armazenam redundâncias controladas, como <code>brand_id</code> junto ao <code>model_id</code>.</p>
+<ul>
+<li><strong>Motivação:</strong> Eliminar a necessidade de <em>JOINs</em> complexos nas consultas de leitura crítica (Dashboard Público), otimizando a performance.</li>
+<li><strong>Garantia:</strong> A integridade é assegurada pelo processo de ingestão (Batch) e pelas Foreign Keys.</li>
+</ul>
+<h3 id="52-stack-tecnologica">5.2. Stack Tecnológica<a class="headerlink" href="#52-stack-tecnologica" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Linguagem:</strong> Python 3.10+ (Tipagem estática com Pydantic/Type Hints).</li>
+<li><strong>ORM:</strong> SQLAlchemy 2.0 (Gerenciamento de sessões e proteção contra SQL Injection).</li>
+<li><strong>UI:</strong> Streamlit (Desenvolvimento rápido de interfaces de dados).</li>
+</ul>
+<hr />
+<h2 id="6-estrutura-do-projeto-source-code">6. Estrutura do Projeto (Source Code)<a class="headerlink" href="#6-estrutura-do-projeto-source-code" title="Permanent link">&para;</a></h2>
+<p>A organização do código fonte reflete a arquitetura em camadas descrita acima, simplificada para o contexto do Streamlit:</p>
+<div class="highlight"><pre><span></span><code>src/
+├── batch_etl.py        # Script do Processo Batch (ETL)
+├── database.py         # Configuração de conexão DB e Session
+├── main.py             # Entrypoint da Aplicação (View + Controller)
+├── models.py           # Todos os Modelos ORM (Entities)
+├── repositories.py     # Camada de Acesso a Dados (Repository Pattern)
+├── seed_data.py        # Script para popular banco com dados fictícios
+└── services.py         # Regras de Negócio (Service Layer)
+</code></pre></div>
+<hr />
+<h2 id="7-requisitos-nao-funcionais">7. Requisitos Não-Funcionais<a class="headerlink" href="#7-requisitos-nao-funcionais" title="Permanent link">&para;</a></h2>
+<h3 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Indexação:</strong> Índices criados nas colunas de filtro (<code>brand_id</code>, <code>model_id</code>, <code>year</code>) nas tabelas de leitura.</li>
+<li><strong>Cache:</strong> Utilização do <code>@st.cache_data</code> do Streamlit para armazenar listas estáticas (Marcas/Modelos), reduzindo chamadas ao banco.</li>
+</ul>
+<h3 id="seguranca">Segurança<a class="headerlink" href="#seguranca" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Acesso:</strong> Consulta pública restrita a dados agregados; dados brutos (que poderiam identificar lojas ou vendedores) não são expostos na UI pública.</li>
+<li><strong>Privacidade:</strong> O <code>query_logs</code> não armazena PII (Informação Pessoal Identificável) do usuário da consulta, limitando-se a metadados da requisição.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "toc.follow", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>

@@ -1,0 +1,122 @@
+/* ===== CarFlow Docs – Visual polish (MkDocs Material) ===== */
+
+/* Mais “cara de site”, menos “cara de wiki” */
+.md-main__inner {
+  max-width: 1400px;
+}
+
+/* Títulos mais fortes e com espaçamento melhor */
+.md-typeset h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+.md-typeset h2 {
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  margin-top: 2.0rem;
+}
+.md-typeset h3 {
+  font-weight: 700;
+  margin-top: 1.4rem;
+}
+
+/* Parágrafos mais confortáveis */
+.md-typeset p,
+.md-typeset li {
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+/* Blocos de código com borda suave */
+.md-typeset pre > code {
+  border-radius: 14px;
+}
+
+/* Tabelas mais bonitas */
+.md-typeset table:not([class]) {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.md-typeset table:not([class]) th {
+  font-weight: 700;
+}
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  padding: 0.75rem 0.9rem;
+}
+
+/* “Cards” simples para listas (usando Markdown) */
+.md-typeset .card {
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  margin: 1rem 0;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .card {
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+}
+
+.md-typeset .badge {
+  display: inline-block;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(0,0,0,0.03);
+  font-size: 0.78rem;
+  margin-right: 0.35rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .badge {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+}
+
+/* Melhorar links */
+.md-typeset a {
+  text-decoration: none;
+}
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Ajuste sutil no header */
+.md-header__title {
+  font-weight: 750;
+}
+
+/* Tipografia mais “docs profissional” */
+.md-typeset {
+  font-size: 0.95rem;
+}
+
+.md-typeset h1 {
+  font-size: 2.0rem;
+}
+
+.md-typeset h2 {
+  font-size: 1.45rem;
+}
+
+/* Deixar o conteúdo usar melhor a largura */
+.md-grid {
+  max-width: 1400px;
+}
+
+/* Centralizar imagens/miniaturas clicáveis (glightbox) */
+.md-typeset a.glightbox {
+  display: flex;
+  justify-content: center;
+}
+
+/* Garantir que a imagem respeite a largura e fique bonita */
+.md-typeset a.glightbox > img {
+  height: auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
