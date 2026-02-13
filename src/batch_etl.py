@@ -1,6 +1,12 @@
-from sqlalchemy import func, select
-from src.database import SessionLocal
-from src.models import PriceCollection, MonthlyAverage, Model
+import sys
+import os
+
+# Adiciona a raiz do projeto ao PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from sqlalchemy import func, select  # noqa: E402
+from src.database import SessionLocal  # noqa: E402
+from src.models import PriceCollection, MonthlyAverage, Model  # noqa: E402
 
 def run_monthly_batch():
     """
@@ -44,27 +50,29 @@ def run_monthly_batch():
         
         print(f"Calculadas {len(results)} métricas consolidadas.")
 
-        # Persistir na tabela consolidada
-        # Estratégia simples: TRUNCATE mensal ou Upsert. 
-        # Aqui faremos Upsert manual (Check if exists -> Update or Insert) 
-        # para ser idempotente.
-        
+        # OTIMIZAÇÃO: Carregar dados existentes em memória para evitar N+1 queries via rede
+        # Isso reduz drasticamente o tempo quando o banco está remoto (Render)
+        print("Carregando médias existentes para comparação...")
+        existing_records = db.query(MonthlyAverage).all()
+        existing_map = {
+            (r.model_id, r.year_model, r.region, r.month_ref): r 
+            for r in existing_records
+        }
+
+        print("Atualizando registros...")
         for row in results:
             # row: (brand_id, model_id, year_model, region, month_ref, avg_price, samples_count)
             brand_id, model_id, year_model, region, month_ref, avg_price, samples_count = row
             
-            # Tenta encontrar existente
-            existing = db.query(MonthlyAverage).filter_by(
-                model_id=model_id,
-                year_model=year_model,
-                month_ref=month_ref,
-                region=region
-            ).first()
-
-            if existing:
-                existing.avg_price = avg_price
-                existing.samples_count = samples_count
+            key = (model_id, year_model, region, month_ref)
+            
+            if key in existing_map:
+                # Atualiza existente (SQLAlchemy detecta a mudança automaticamente)
+                record = existing_map[key]
+                record.avg_price = avg_price
+                record.samples_count = samples_count
             else:
+                # Cria novo
                 new_avg = MonthlyAverage(
                     brand_id=brand_id,
                     model_id=model_id,
@@ -76,6 +84,7 @@ def run_monthly_batch():
                 )
                 db.add(new_avg)
         
+        print("Commitando alterações...")
         db.commit()
         print("Batch Mensal finalizado com sucesso!")
         
