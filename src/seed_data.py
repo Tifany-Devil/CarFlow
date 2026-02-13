@@ -4,11 +4,11 @@ import os
 # Adiciona a raiz do projeto ao PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import random
-from datetime import datetime, timedelta
-from sqlalchemy import text
-from src.database import SessionLocal, engine, Base
-from src.models import Brand, Model, PriceCollection
+import random  # noqa: E402
+from datetime import datetime, timedelta  # noqa: E402
+from sqlalchemy import text  # noqa: E402
+from src.database import SessionLocal, engine, Base  # noqa: E402
+from src.models import Brand, Model, PriceCollection  # noqa: E402
 
 # Catálogo Expandido
 MODELS_DATA = {

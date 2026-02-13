@@ -31,7 +31,13 @@ def _make_db_mock(results_rows, existing_first_return=None, execute_raises=None)
         result_proxy.all.return_value = results_rows
         db.execute.return_value = result_proxy
 
+    # OTIMIZAÇÃO BATCH: Agora o código carrega db.query(...).all() em vez de filter_by
+    # Precisamos ajustar o mock para retornar uma lista com o item existente
+    # quando db.query(MonthlyAverage).all() for chamado.
     q = db.query.return_value
+    q.all.return_value = [existing_first_return] if existing_first_return else []
+    
+    # O mock antigo filter_by não é mais usado, mas mantemos por segurança
     f = q.filter_by.return_value
     f.first.return_value = existing_first_return
 
