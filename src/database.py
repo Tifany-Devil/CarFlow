@@ -14,6 +14,8 @@ connect_args = {}
 if "render.com" in DATABASE_URL:
     connect_args = {"sslmode": "require"}
 
+
+
 # Criação da Engine
 # pool_pre_ping=True: Verifica a conexão antes de usar. Se caiu (ex: "SSL connection closed"), ele reconecta automaticamente.
 # pool_recycle=1800: Recicla conexões a cada 30 min para evitar timeouts do servidor.

@@ -41,3 +41,17 @@ Para evitar o acoplamento excessivo, o código do Streamlit foi estruturado em c
 * **Controller:** Orquestra a requisição. Valida inputs e chama o Serviço adequado.
 * **Service Layer:** O coração da regra de negócio. Contém a lógica de domínio pura. Desconhece o Streamlit e o SQL.
 * **Repository Layer:** Abstrai o acesso a dados. Garante que o domínio não dependa de SQL direto.
+
+## 4. Infraestrutura e Deploy
+
+A aplicação opera em ambiente 100% nuvem (Cloud Native), utilizando serviços PaaS (Platform as a Service) para reduzir a complexidade operacional (NoOps).
+
+| Componente | Serviço de Hospedagem | Justificativa |
+| :--- | :--- | :--- |
+| **Web App** | **Streamlit Community Cloud** | Integração nativa com GitHub (CI/CD automático) e gestão de segredos. |
+| **Database** | **Render (PostgreSQL)** | Camada gratuita generosa, conexão segura via SSL e facilidade de setup. |
+
+**Fluxo de Deploy:**
+1.  Commit no branch `main` do GitHub.
+2.  Streamlit Cloud detecta a mudança e reconstrói o container da aplicação.
+3.  A aplicação se conecta ao Render via variáveis de ambiente (`DATABASE_URL`).
