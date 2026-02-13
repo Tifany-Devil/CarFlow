@@ -8,4 +8,4 @@ pydantic==2.6.1
 ruff==0.1.14
 pytest==7.4.4
 httpx==0.26.0
-pycoverage==7.2.7
+coverage==7.2.7
