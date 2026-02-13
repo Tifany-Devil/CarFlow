@@ -5,16 +5,17 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Configuração da URL do banco a partir de variáveis de ambiente
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/carflow_db")
 
-# Ajuste para compatibilidade com SQLAlchemy (Render usa postgres:// mas o correto é postgresql://)
+# Ajuste para compatibilidade com SQLAlchemy
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Render e Neon exigem SSL, vamos garantir que a query string tenha sslmode=require
-if "render.com" in DATABASE_URL and "sslmode" not in DATABASE_URL:
-    DATABASE_URL += "?sslmode=require"
+# Config SSL para Render/Neon via connect_args (mais seguro que manipular string)
+connect_args = {}
+if "render.com" in DATABASE_URL:
+    connect_args = {"sslmode": "require"}
 
 # Criação da Engine
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 
 # Configuração da Sessão
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
