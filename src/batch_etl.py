@@ -26,6 +26,7 @@ def run_monthly_batch():
                 Model.brand_id,
                 PriceCollection.model_id,
                 PriceCollection.year_model,
+                PriceCollection.region,
                 func.to_char(PriceCollection.collected_at, 'YYYY-MM').label("month_ref"),
                 func.avg(PriceCollection.price).label("avg_price"),
                 func.count(PriceCollection.id).label("samples_count")
@@ -35,6 +36,7 @@ def run_monthly_batch():
                 Model.brand_id,
                 PriceCollection.model_id,
                 PriceCollection.year_model,
+                PriceCollection.region,
                 func.to_char(PriceCollection.collected_at, 'YYYY-MM')
             )
         )
@@ -49,14 +51,15 @@ def run_monthly_batch():
         # para ser idempotente.
         
         for row in results:
-            # row: (brand_id, model_id, year_model, month_ref, avg_price, samples_count)
-            brand_id, model_id, year_model, month_ref, avg_price, samples_count = row
+            # row: (brand_id, model_id, year_model, region, month_ref, avg_price, samples_count)
+            brand_id, model_id, year_model, region, month_ref, avg_price, samples_count = row
             
             # Tenta encontrar existente
             existing = db.query(MonthlyAverage).filter_by(
                 model_id=model_id,
                 year_model=year_model,
-                month_ref=month_ref
+                month_ref=month_ref,
+                region=region
             ).first()
 
             if existing:
@@ -68,6 +71,7 @@ def run_monthly_batch():
                     model_id=model_id,
                     year_model=year_model,
                     month_ref=month_ref,
+                    region=region,
                     avg_price=avg_price,
                     samples_count=samples_count
                 )

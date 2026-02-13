@@ -34,6 +34,7 @@ class MonthlyAverage(Base):
     model_id = Column(Integer, ForeignKey("models.id"))
     year_model = Column(Integer, index=True)
     month_ref = Column(String, index=True) # Formato YYYY-MM
+    region = Column(String, index=True, nullable=True) # Região consolidada
     
     avg_price = Column(Float)
     samples_count = Column(Integer)
@@ -47,5 +48,6 @@ class QueryLog(Base):
     brand_id = Column(Integer, nullable=True)
     model_id = Column(Integer, nullable=True)
     year_model = Column(Integer, nullable=True)
+    region = Column(String, nullable=True) # Adicionado para análises regionais
     status = Column(String) # SUCCESS, NO_RESULT, ERROR
     created_at = Column(DateTime(timezone=True), server_default=func.now())

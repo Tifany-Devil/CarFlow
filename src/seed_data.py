@@ -1,131 +1,94 @@
 import random
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
+from sqlalchemy import text
 from src.database import SessionLocal, engine, Base
 from src.models import Brand, Model, PriceCollection
 
-# Listas de Dados Fictícios (Inspirados na FIPE)
-BRANDS_DATA = [
-    {"name": "Toyota"}, 
-    {"name": "Honda"}, 
-    {"name": "Ford"}, 
-    {"name": "Chevrolet"}, 
-    {"name": "Volkswagen"}
-]
-
+# Catálogo Expandido
 MODELS_DATA = {
-    "Toyota": [
-        {"name": "Corolla XEi 2.0", "type": "Carro"},
-        {"name": "Hilux CD 4x4", "type": "Caminhonete"},
-        {"name": "Yaris Hatch", "type": "Carro"}
-    ],
-    "Honda": [
-        {"name": "Civic Touring 1.5 Turbo", "type": "Carro"},
-        {"name": "HR-V EXL", "type": "Carro"},
-        {"name": "CR-V", "type": "Carro"}
-    ],
-    "Ford": [
-        {"name": "Ranger Limited", "type": "Caminhonete"},
-        {"name": "Mustang GT", "type": "Carro"},
-        {"name": "Bronco Sport", "type": "Carro"}
-    ],
-    "Chevrolet": [
-        {"name": "Onix Plus", "type": "Carro"},
-        {"name": "Tracker RS", "type": "Carro"},
-        {"name": "S10 High Country", "type": "Caminhonete"}
-    ],
-    "Volkswagen": [
-        {"name": "Polo Highline", "type": "Carro"},
-        {"name": "T-Cross Comfortline", "type": "Carro"},
-        {"name": "Nivus", "type": "Carro"}
-    ]
+    "Chevrolet": [("Onix Plus", 95000), ("Tracker RS", 145000), ("S10 High Country", 290000)],
+    "Toyota": [("Corolla XEi", 148000), ("Hilux CD", 280000), ("Yaris Hatch", 98000)],
+    "Honda": [("Civic Touring", 185000), ("HR-V EXL", 160000), ("City Sedan", 115000)],
+    "Volkswagen": [("Polo Highline", 110000), ("Nivus", 135000), ("T-Cross", 140000)],
+    "BYD": [("Dolphin", 149800), ("Song Plus", 229800), ("Seal", 296000)],
+    "Ford": [("Ranger Limited", 320000), ("Territory", 210000)]
 }
 
-REGIONS = ["SP", "RJ", "MG", "RS", "PR", "BA", "DF"]
+REGIONS = ["SP", "RJ", "MG", "RS", "PR", "BA", "DF", "SC", "PE"]
 
 def seed_database():
-    # Recria tabelas para garantir schema novo
+    print("🚀 Iniciando Seed Otimizado (Volume Alto)...")
+    
+    # Limpeza
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-    
     db = SessionLocal()
-    
+
     try:
-        # 1. Inserir Marcas
-        if db.query(Brand).count() == 0:
-            print("Inserindo Marcas...")
-            brands_db = {}
-            for brand_info in BRANDS_DATA:
-                brand = Brand(name=brand_info["name"])
-                db.add(brand)
-                db.commit()
-                db.refresh(brand)
-                brands_db[brand.name] = brand.id
+        # 1. Marcas e Modelos
+        models_list = []
+        for brand_name, models in MODELS_DATA.items():
+            brand = Brand(name=brand_name)
+            db.add(brand)
+            db.commit()
+            db.refresh(brand)
             
-            # 2. Inserir Modelos
-            print("Inserindo Modelos...")
-            models_ids = []
-            for brand_name, models_list in MODELS_DATA.items():
-                brand_id = brands_db.get(brand_name)
-                for model_info in models_list:
-                    model = Model(
-                        name=model_info["name"],
-                        brand_id=brand_id,
-                        vehicle_type=model_info["type"]
-                    )
-                    db.add(model)
-                    db.commit()
-                    db.refresh(model)
-                    models_ids.append(model.id)
-
-            # 3. Gerar Coletas de Preço (PriceCollection)
-            # Simula dados dos últimos 6 meses
-            print("Gerando Manteiga (Dados de Coleta)...")
-            today = datetime.now()
-            collections = []
-            
-            for _ in range(3000): # 3000 coletas simuladas
-                model_id_choice = random.choice(models_ids)
-                
-                # Preço base aleatório entre 80k e 250k
-                base_price = random.uniform(80000, 250000)
-                
-                # Data aleatória nos últimos 180 dias
-                days_ago = random.randint(0, 180)
-                collected_date = today - timedelta(days=days_ago)
-                
-                # Ano do modelo (2020 a 2024)
-                year_mod = random.choice([2020, 2021, 2022, 2023, 2024])
-                
-                # Ajuste de preço por ano (Aproximação)
-                price_adjusted = base_price * (1 + (year_mod - 2020) * 0.05)
-                # Variação regional/aleatória (+- 5%)
-                price_final = price_adjusted * random.uniform(0.95, 1.05)
-                
-                collection = PriceCollection(
-                    model_id=model_id_choice,
-                    year_model=year_mod,
-                    price=price_final,
-                    region=random.choice(REGIONS),
-                    collected_at=collected_date
-                )
-                collections.append(collection)
-                
-                # Batch insert a cada 500 para performance
-                if len(collections) >= 500:
-                    db.add_all(collections)
-                    db.commit()
-                    collections = []
-
-            if collections:
-                db.add_all(collections)
+            for m_name, base_price in models:
+                model = Model(name=m_name, brand_id=brand.id, vehicle_type="Carro")
+                db.add(model)
                 db.commit()
-                
-            print("Sucesso! Banco populado.")
-        else:
-            print("O banco já possui dados. Pulei o Seed.")
+                db.refresh(model)
+                models_list.append((model.id, base_price))
+
+        # 2. Geração Massiva
+        print("Gerando histórico de 13 meses com alta densidade...")
+        collections = []
+        today = datetime.now()
+        
+        for model_id, base_price in models_list:
+            for region in REGIONS:
+                # Últimos 13 meses para garantir gráficos cheios
+                for month_offset in range(13): 
+                    ref_date = today - timedelta(days=30 * month_offset)
+                    
+                    # Aumentei para 15 a 40 coletas por região/mês
+                    num_coletas = random.randint(15, 40)
+                    
+                    for _ in range(num_coletas):
+                        day_jitter = random.randint(-10, 10)
+                        final_date = ref_date + timedelta(days=day_jitter)
+                        
+                        # Fatores de Variação de Preço
+                        regional_factor = 1.0
+                        if region == "SP": regional_factor = 1.03
+                        if region == "BA": regional_factor = 0.96
+                        
+                        # Volatilidade de mercado (depreciação leve no passado)
+                        time_factor = 1.0 - (month_offset * 0.005) 
+                        
+                        volatility = random.uniform(0.95, 1.05)
+                        final_price = base_price * regional_factor * time_factor * volatility
+                        
+                        c = PriceCollection(
+                            model_id=model_id,
+                            year_model=2024,
+                            price=final_price,
+                            region=region,
+                            collected_at=final_date
+                        )
+                        collections.append(c)
+        
+        # Salva em lotes maiores
+        print(f"Salvando {len(collections)} registros...")
+        for i in range(0, len(collections), 2000):
+            db.add_all(collections[i:i+2000])
+            db.commit()
+            print(f"Lote {i} processado...")
+            
+        print("✅ Banco populado com sucesso!")
 
     except Exception as e:
-        print(f"Erro ao popular banco: {e}")
+        print(e)
         db.rollback()
     finally:
         db.close()

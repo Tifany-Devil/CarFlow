@@ -22,15 +22,22 @@ class CarService:
         """Retorna anos disponíveis para um modelo."""
         return self.repository.get_years_by_model(model_id)
 
-    def get_consolidated_price(self, brand_id: int, model_id: int, year_model: int) -> Dict[str, Any]:
+    def list_regions(self) -> List[str]:
+        """Retorna lista de regiões disponíveis."""
+        return [r for r in self.repository.get_available_regions() if r is not None]
+
+    def get_consolidated_price(self, brand_id: int, model_id: int, year_model: int, region: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Retorna o KPI principal (último preço) e o histórico para gráficos.
         Registra log automaticamente.
         """
-        history = self.repository.get_price_history(model_id, year_model)
+        history = self.repository.get_price_history(model_id, year_model, region)
         
+        # Log da Tentativa (Com região agora)
+        status = "SUCCESS" if history else "NO_RESULT"
+        self.repository.create_log(brand_id, model_id, year_model, status, region)
+
         if not history:
-            self.repository.create_log(brand_id, model_id, year_model, "NO_RESULT")
             return None
 
         # Preparar dados para o Front
@@ -41,7 +48,6 @@ class CarService:
         
         latest = history[-1]
         
-        self.repository.create_log(brand_id, model_id, year_model, "SUCCESS")
         
         return {
             "current_price": latest.avg_price,

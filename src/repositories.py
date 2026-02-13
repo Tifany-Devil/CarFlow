@@ -26,23 +26,33 @@ class CarRepository:
         )
         return self.db.execute(statement).scalars().all()
 
-    def get_price_history(self, model_id: int, year_model: int) -> List[MonthlyAverage]:
-        statement = (
+    def get_available_regions(self) -> List[str]:
+        statement = select(MonthlyAverage.region).distinct().order_by(MonthlyAverage.region)
+        return self.db.execute(statement).scalars().all()
+
+    def get_price_history(self, model_id: int, year_model: int, region: Optional[str] = None) -> List[MonthlyAverage]:
+        query = (
             select(MonthlyAverage)
             .where(
                 MonthlyAverage.model_id == model_id,
                 MonthlyAverage.year_model == year_model
             )
-            .order_by(MonthlyAverage.month_ref)
         )
-        return self.db.execute(statement).scalars().all()
+        
+        if region:
+            query = query.where(MonthlyAverage.region == region)
+            
+        query = query.order_by(MonthlyAverage.month_ref)
+        
+        return self.db.execute(query).scalars().all()
 
-    def create_log(self, brand_id: Optional[int], model_id: Optional[int], year_model: Optional[int], status: str):
+    def create_log(self, brand_id: Optional[int], model_id: Optional[int], year_model: Optional[int], status: str, region: Optional[str] = None):
         log = QueryLog(
             brand_id=brand_id,
             model_id=model_id,
             year_model=year_model,
-            status=status
+            status=status,
+            region=region
         )
         self.db.add(log)
         self.db.commit()
